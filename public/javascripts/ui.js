@@ -9,6 +9,7 @@ class Ui {
     this.unit = 50;
 
     this.grid();
+    this.circle(0,0,Math.random());
   }
   tick() {
 
@@ -36,6 +37,31 @@ class Ui {
 
     this.context.strokeStyle = "black";
     this.context.stroke();
+  }
+  circle(ux, uy, completion) {
+    const startx = ux * this.unit;
+    const starty = uy * this.unit;
+    this.context.clearRect(startx, starty * this.unit, this.unit, this.unit);
+
+    this.context.beginPath();
+    // background grey circle
+    // x, y, radius, start, end, anticlockwise
+    this.context.arc(startx + this.unit/2 , starty + this.unit/2, this.unit*2/5,
+      0, Math.PI*2, false);
+    this.context.fillStyle = '#e2e1e1';
+    this.context.fill();
+
+    this.context.beginPath();
+    // over yellow arc
+    // context.arc(150, 150, 50,
+    //   Math.PI / 2 - Math.PI * percent / 100,
+    //   Math.PI / 2 + Math.PI * percent / 100, false);
+    this.context.arc(startx + this.unit/2 , starty + this.unit/2, this.unit*2/5,
+      Math.PI * (1 - 2 * completion) / 2,
+      Math.PI * (1 + 2 * completion) / 2, false
+    );
+    this.context.fillStyle = '#fccd00';
+    this.context.fill();
   }
 }
 
