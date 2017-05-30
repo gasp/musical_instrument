@@ -55,9 +55,5 @@ class Controller {
     this.x = this.pads[0].axes[1];
     this.y = this.pads[0].axes[2];
     console.log(this.x, this.y);
-
   }
 }
-
-// singleton
-const controller = new Controller();
