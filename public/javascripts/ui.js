@@ -98,7 +98,7 @@ class Ui {
     // point
     this.context.beginPath();
     this.context.fillStyle = '#000';
-    this.context.arc(pointx, pointy, this.unit / 3, 0, Math.PI*2, false);
+    this.context.arc(pointx, pointy, this.unit / 3 - 1, 0, Math.PI*2, false);
     this.context.fill();
   }
 }
