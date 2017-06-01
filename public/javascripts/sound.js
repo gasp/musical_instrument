@@ -4,7 +4,11 @@ const context = new AudioContext();
 // global gain control
 const amp = context.createGain();
 amp.gain.value = .5;
-amp.connect(context.destination)
+const analyser = context.createAnalyser();
+amp.connect(analyser);
+analyser.connect(context.destination);
+analyser.fftSize = 1024;
+const dataArray = new Float32Array(1024);
 
 class Oscillator {
   constructor(freq) {

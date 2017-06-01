@@ -101,4 +101,24 @@ class Ui {
     this.context.arc(pointx, pointy, this.unit / 3 - 1, 0, Math.PI*2, false);
     this.context.fill();
   }
+  wave() {
+    analyser.getFloatTimeDomainData(dataArray);
+    this.context.fillStyle = '#fff';
+    this.context.fillRect(0, 0, this.width, 255);
+    this.context.lineWidth = 2;
+    this.context.strokeStyle = '#477cf2';
+    this.context.beginPath();
+
+    const sliceWidth = this.width / 1024;
+    let x = 0;
+    this.context.moveTo(0, 150);
+    for (let i = 0; i < 1024; i++) {
+      const v = dataArray[i] * 200.0;
+      const y = Math.min(200/2 + v, 200);
+      this.context.lineTo(x, y + 50);
+      x += sliceWidth;
+    }
+    this.context.lineTo(this.width, 150);
+    this.context.stroke();
+  }
 }
