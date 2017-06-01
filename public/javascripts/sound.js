@@ -10,6 +10,15 @@ analyser.connect(context.destination);
 analyser.fftSize = 1024;
 const dataArray = new Float32Array(1024);
 
+// lfo
+const lfo = context.createOscillator();
+lfo.frequency.value = 20;
+lfo_amp = context.createGain()
+lfo_amp.gain.value = .5;
+lfo.connect(lfo_amp);
+lfo_amp.connect(amp);
+lfo.start();
+
 class Oscillator {
   constructor(freq) {
     this.gainNode = context.createGain();
@@ -22,6 +31,7 @@ class Oscillator {
     this.oscillator.frequency.value = freq;
 
     this.gainNode.connect(amp);
+    // this.gainNode.connect(lfo.frequency);
     this.oscillator.connect(this.gainNode);
 
     this.oscillator.start();
@@ -38,9 +48,6 @@ class Oscillator {
     }
   }
 }
-
-
-
 
 
 
