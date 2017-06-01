@@ -8,18 +8,22 @@ class Ui {
     this.height = 400;
     this.unit = 50;
 
-    //this.grid();
+    // this.grid();
+    // just some notes
+    this.context.beginPath();
+    this.context.font = '48px serif';
+    this.context.fillStyle = '#477cf2';
+    this.context.fillText('initializing', 80, 150);
 
     for (let i = 1; i < 5; i++) {
       for (let j = 0; j < 2; j++) {
-        this.circle(i, j, Math.random());
+        this.circle(i, j + 6, Math.random());
       }
     }
-    this.ring(6,0, -999, 0);
+    this.ring(6, 6, -999, 0);
   }
   tick(controller) {
-    this.ring(6, 0, controller.x, controller.y);
-
+    this.ring(6, 6, controller.x, controller.y);
   }
   // grid
   grid() {
