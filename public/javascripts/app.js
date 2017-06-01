@@ -18,7 +18,8 @@ class App {
   }
 }
 
+let app = {};
 window.addEventListener('load', () => {
   // singleton
-  const app = new App();
+  app = new App();
 }, false);
