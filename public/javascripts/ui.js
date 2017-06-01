@@ -53,8 +53,7 @@ class Ui {
   circle(ux, uy, completion) {
     const startx = ux * this.unit;
     const starty = uy * this.unit;
-    this.context.clearRect(startx, starty * this.unit, this.unit, this.unit);
-
+    this.context.clearRect(startx, starty, this.unit, this.unit);
     this.context.beginPath();
     // background grey circle
     // x, y, radius, start, end, anticlockwise
