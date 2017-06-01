@@ -24,6 +24,7 @@ class Ui {
   }
   tick(controller) {
     this.ring(6, 6, controller.x, controller.y);
+    this.wave();
   }
   // grid
   grid() {
