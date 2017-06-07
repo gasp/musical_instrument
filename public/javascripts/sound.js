@@ -64,6 +64,10 @@ document.addEventListener("keydown", (ev) => {
     app.ui.circle(i + 1, 6, .8);
     oscillators[i] = new Oscillator(frequencies[i]);
   }
+  if(ev.which === 32) {
+    // in recording mode
+    app.ui.circle(2, 6, 1, '#aa0c0c');
+  }
 });
 
 document.addEventListener("keyup", (ev) => {

@@ -51,7 +51,7 @@ class Ui {
     this.context.stroke();
   }
 
-  circle(ux, uy, completion) {
+  circle(ux, uy, completion, color='#fccd00') {
     const startx = ux * this.unit;
     const starty = uy * this.unit;
     this.context.clearRect(startx, starty, this.unit, this.unit);
@@ -72,7 +72,7 @@ class Ui {
       Math.PI * (1 - 2 * completion) / 2,
       Math.PI * (1 + 2 * completion) / 2, false
     );
-    this.context.fillStyle = '#fccd00';
+    this.context.fillStyle = color;
     this.context.fill();
   }
   ring(ux, uy, cx, cy) {
