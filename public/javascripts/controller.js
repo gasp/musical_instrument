@@ -34,7 +34,7 @@ class Controller {
     console.log('pads?')
     const rawPads = navigator.getGamepads();
     if (!rawPads.length) return false;
-
+    if (rawPads[0] === null) return false; // chrome always set 4 empty rawPads
     // do we already have data about pads ?
     // FIXME: check all gamepads, not only the first one
     if (this.prevPads.length && rawPads[0].id === this.prevPads[0].id) return false;
