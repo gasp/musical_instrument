@@ -49,11 +49,22 @@ class Controller {
     // no pads, return
     if (!this.pads.length) return;
 
-    // no movement, ignore
-    if (this.x === this.pads[0].axes[1] && this.y === this.pads[0].axes[2]) return;
+    // map axes
+    let ax = 1;
+    let ay = 2;
+    if (/Chrome/.test(navigator.userAgent)) {
+      // chrome has to refresh getGamepads
+      navigator.getGamepads();
+      // chrome maps diffetrently
+      ax = 0;
+      ay = 1;
+    }
 
-    this.x = this.pads[0].axes[1];
-    this.y = this.pads[0].axes[2];
+    // no movement, ignore
+    if (this.x === this.pads[0].axes[ax] && this.y === this.pads[0].axes[ay]) return;
+
+    this.x = this.pads[0].axes[ax];
+    this.y = this.pads[0].axes[ay];
     // console.log(this.x, this.y);
     lfo_amp.gain.value = this.y;
     if (this.x > 0) lfo.frequency.value = Math.exp(this.x) * 400;
