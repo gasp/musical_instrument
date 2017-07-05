@@ -1,38 +1,47 @@
-function loadSampleWithFetch(url, cb) {
-  fetch(url).then(function(response) {
-    return response.arrayBuffer();
-  }).then(function(audioData) {
-    context.decodeAudioData(audioData, function(buffer) {
-      console.log(buffer);
-      cb(buffer);
+class Sample {
+  constructor() {
+    this.audioData = null;
+  }
+  load(url) {
+    return fetch(url).then((response) => { // fetch is natively a promise
+      return response.arrayBuffer();
+    }).then((audioData) => {
+      return new Promise((resolve, reject) => {
+        context.decodeAudioData(audioData, (buffer) => {
+          this.audioData = buffer;
+          resolve(buffer)
+        });
+      });
     });
-  });
-}
-var hat;
-
-loadSampleWithFetch('/samples/odx/012_DX_Cl_Hat.wav', function (buffer){
-    hat = buffer;
-});
-
-
-function playHat() {
-     var player = context.createBufferSource();
-    player.buffer = hat;
+  }
+  play(loop=false) {
+    const player = context.createBufferSource();
+    player.buffer = this.audioData;
     player.start();
-    player.loop = false;
-    player.connect(amp); // FIXME this bypasses amp and analyzer
+    player.loop = loop;
+    player.connect(amp);
+    return player;
+  }
 }
 
+const samples = [
+  {name: 'hat', source: '/samples/odx/012_DX_Cl_Hat.wav', loop: false},
+  {name: 'abt', source: '/samples/ade/003_abt.wav', loop: true}
+];
 
-function playBackgroundLoop() {
-  loadSampleWithFetch('/samples/ade/003_abt.wav', function (buffer){
-      let bgLoop = buffer;
-      const player = context.createBufferSource();
-      player.buffer = bgLoop;
-      player.start();
-      player.loop = true;
-      player.connect(amp);  // FIXME this bypasses amp and analyzer
-      console.log('playing backgrouns')
+Promise.all((() => {
+  samples.forEach((s) => {
+    s.obj = new Sample();
   });
-
-}
+  return samples.map((s) => {
+    return s.obj.load(s.source);
+  });
+})()).then((audioBuffers) => {
+  // everything is playable !
+  console.log(audioBuffers, samples[1].obj.audioData.duration);
+  // FIXME no need to autostart,
+  // instead, start drawing some ui
+  // samples.forEach((s) => {
+  //   s.obj.play(s.loop);
+  // });
+});

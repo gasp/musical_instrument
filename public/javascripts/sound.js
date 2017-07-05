@@ -1,3 +1,7 @@
+// TODO:
+// this should be cut between sources and player
+// sources can be recorder (gum), samples (pre set sounds) and oscillator
+
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 const context = new AudioContext();
 
@@ -66,8 +70,19 @@ document.addEventListener("keydown", (ev) => {
   }
   if(ev.which === 32) {
     // in recording mode
+    console.log('space pressed, recording mode')
     app.ui.circle(2, 6, 1, '#aa0c0c');
   }
+  if(ev.which === 81) {
+    app.ui.circle(1, 7, 1);
+    samples[0].obj.play(samples[0].loop)
+  }
+  if(ev.which === 83) {
+    app.ui.circle(2, 7, 1);
+    samples[1].obj.play(samples[1].loop)
+  }
+  console.log(ev.which)
+
 });
 
 document.addEventListener("keyup", (ev) => {
@@ -76,5 +91,8 @@ document.addEventListener("keyup", (ev) => {
   if(i>-1){
     app.ui.circle(i + 1, 6, .2);
     oscillators[i].off();
+  }
+  if(ev.which === 81) {
+    app.ui.circle(1, 7, 0);
   }
 });

@@ -21,6 +21,26 @@ class Ui {
       }
     }
     this.ring(6, 6, -999, 0);
+    this.context.fillStyle = '#000'
+    this.context.font = '8px sans-serif'
+    this.context.fillText('A: osc0',
+      this.unit * 1 + this.unit/2 - 12,
+      this.unit * 6 + this.unit/2 + 3);
+    this.context.fillText('Z: osc1',
+      this.unit * 2 + this.unit/2 - 12,
+      this.unit * 6 + this.unit/2 + 3);
+    this.context.fillText('E: osc2',
+      this.unit * 3 + this.unit/2 - 12,
+      this.unit * 6 + this.unit/2 + 3);
+    this.context.fillText('R: osc3',
+      this.unit * 4 + this.unit/2 - 12,
+      this.unit * 6 + this.unit/2 + 3);
+    this.context.fillText('Q: hat',
+      this.unit * 1 + this.unit/2 - 8,
+      this.unit * 7 + this.unit/2 + 3);
+    this.context.fillText('S: bg',
+      this.unit * 2 + this.unit/2 - 8,
+      this.unit * 7 + this.unit/2 + 3);
   }
   tick(controller) {
     this.ring(6, 6, controller.x, controller.y);
