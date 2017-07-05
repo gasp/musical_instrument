@@ -21,10 +21,32 @@ class Ui {
       }
     }
     this.ring(6, 6, -999, 0);
+    this.context.fillStyle = '#000'
+    this.context.font = '8px sans-serif'
+    this.context.fillText('A: osc0',
+      this.unit * 1 + this.unit/2 - 12,
+      this.unit * 6 + this.unit/2 + 3);
+    this.context.fillText('Z: osc1',
+      this.unit * 2 + this.unit/2 - 12,
+      this.unit * 6 + this.unit/2 + 3);
+    this.context.fillText('E: osc2',
+      this.unit * 3 + this.unit/2 - 12,
+      this.unit * 6 + this.unit/2 + 3);
+    this.context.fillText('R: osc3',
+      this.unit * 4 + this.unit/2 - 12,
+      this.unit * 6 + this.unit/2 + 3);
+    this.context.fillText('Q: hat',
+      this.unit * 1 + this.unit/2 - 8,
+      this.unit * 7 + this.unit/2 + 3);
+    this.context.fillText('S: bg',
+      this.unit * 2 + this.unit/2 - 8,
+      this.unit * 7 + this.unit/2 + 3);
   }
   tick(controller) {
     this.ring(6, 6, controller.x, controller.y);
     this.wave();
+    this.circle(1, 6, .6);
+    this.pitchcircle(1, 6, (context.currentTime % pitch) / pitch, '#ccc', false);
   }
   // grid
   grid() {
@@ -51,7 +73,7 @@ class Ui {
     this.context.stroke();
   }
 
-  circle(ux, uy, completion) {
+  circle(ux, uy, completion=1, color='#fccd00') {
     const startx = ux * this.unit;
     const starty = uy * this.unit;
     this.context.clearRect(startx, starty, this.unit, this.unit);
@@ -72,9 +94,36 @@ class Ui {
       Math.PI * (1 - 2 * completion) / 2,
       Math.PI * (1 + 2 * completion) / 2, false
     );
-    this.context.fillStyle = '#fccd00';
+    this.context.fillStyle = color;
     this.context.fill();
   }
+
+  pitchcircle(ux, uy, completion=1, color='#fc1919', rec=true) {
+    const startx = ux * this.unit;
+    const starty = uy * this.unit;
+    // this.context.clearRect(startx, starty, this.unit, this.unit);
+    if (rec) {
+      this.context.beginPath();
+      this.context.strokeStyle = '#fc1919';
+      this.context.lineWidth = 2;
+      this.context.arc(startx + this.unit/2 , starty + this.unit/2, this.unit*2/5,
+        - Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * completion, false);
+      this.context.stroke();
+      // debug
+      // this.context.font = '8px sans-serif'
+      // this.context.fillText(Math.floor(completion*100)/100,
+      //   startx + this.unit/2 - 8,
+      //   starty + this.unit/2 + 3);
+    }
+
+    this.context.beginPath();
+    this.context.arc(startx + this.unit/2 , starty + this.unit/2, this.unit*2/5,
+      Math.PI * 2 * completion - Math.PI / 2, Math.PI * 2 * completion + Math.PI / 16 - Math.PI / 2, false);
+    this.context.strokeStyle = '#000'
+    this.context.lineWidth = 4;
+    this.context.stroke();
+  }
+
   ring(ux, uy, cx, cy) {
     // start drawing at
     const startx = ux * this.unit;

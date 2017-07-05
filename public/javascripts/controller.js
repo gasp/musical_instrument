@@ -34,7 +34,7 @@ class Controller {
     console.log('pads?')
     const rawPads = navigator.getGamepads();
     if (!rawPads.length) return false;
-
+    if (rawPads[0] === null) return false; // chrome always set 4 empty rawPads
     // do we already have data about pads ?
     // FIXME: check all gamepads, not only the first one
     if (this.prevPads.length && rawPads[0].id === this.prevPads[0].id) return false;
@@ -49,11 +49,22 @@ class Controller {
     // no pads, return
     if (!this.pads.length) return;
 
-    // no movement, ignore
-    if (this.x === this.pads[0].axes[1] && this.y === this.pads[0].axes[2]) return;
+    // map axes
+    let ax = 1;
+    let ay = 2;
+    if (/Chrome/.test(navigator.userAgent)) {
+      // chrome has to refresh getGamepads
+      navigator.getGamepads();
+      // chrome maps diffetrently
+      ax = 0;
+      ay = 1;
+    }
 
-    this.x = this.pads[0].axes[1];
-    this.y = this.pads[0].axes[2];
+    // no movement, ignore
+    if (this.x === this.pads[0].axes[ax] && this.y === this.pads[0].axes[ay]) return;
+
+    this.x = this.pads[0].axes[ax];
+    this.y = this.pads[0].axes[ay];
     // console.log(this.x, this.y);
     // FIXME get those outta there
     lfo_amp.gain.value = this.y;
