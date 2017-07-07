@@ -1,0 +1,21 @@
+{
+  "minify": false,
+  "options": [
+  ],
+  "feature-detects": [
+    "test/blob",
+    "test/canvas",
+    "test/canvastext",
+    "test/json",
+    "test/postmessage",
+    "test/websockets",
+    "test/audio/webaudio",
+    "test/es6/promises",
+    "test/file/api",
+    "test/network/fetch",
+    "test/url/bloburls",
+    "test/url/data-uri",
+    "test/webrtc/getusermedia",
+    "test/workers/webworkers"
+  ]
+}
