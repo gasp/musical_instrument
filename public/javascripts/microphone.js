@@ -1,33 +1,40 @@
-// getUserMedia block - grab stream
-// put it into a MediaStreamAudioSourceNode
-
-if (navigator.mediaDevices) {
-    console.log('getUserMedia supported.');
-    navigator.mediaDevices.getUserMedia ({audio: true})
-    .then(function(stream) {
-        var source = context.createMediaStreamSource(stream);
-        // and use mediaRecorder
-        // https://developer.mozilla.org/en-US/docs/Web/API/MediaRecorder
-
-        // Create a biquadfilter
-        var biquadFilter = context.createBiquadFilter();
-        biquadFilter.type = "lowshelf";
-        biquadFilter.frequency.value = 1000;
-        biquadFilter.gain.value = 50;
-
-        // connect the AudioBufferSourceNode to the gainNode
-        // and the gainNode to the destination, so we can play the
-        // music and adjust the volume using the mouse cursor
-        source.connect(biquadFilter);
-        biquadFilter.connect(amp);
-
-        // range.oninput = function() {
-        //     biquadFilter.gain.value = range.value;
-        // }
-    })
-    .catch(function(err) {
-        console.log('The following getUserMedia error occured: ' + err);
+class Microphone {
+  constructor() {
+    const that = this;
+    navigator.mediaDevices.getUserMedia({audio: true}).then(function(stream) {
+      that.stream = stream;
+      that.mediaRecorder = new MediaRecorder(stream);
     });
-} else {
-   console.log('getUserMedia not supported on your browser!');
+    this.chunks = [];
+    this.reader = new FileReader();
+  }
+
+  record() {
+    this.mediaRecorder.start();
+    this.mediaRecorder.ondataavailable = function(e) {
+      this.chunks.push(e.data);
+    }
+  }
+  stop() {
+    const blob = new Blob(this.chunks, {
+      'type': 'audio/wav'
+    });
+    this.chunks = []; // empty chunks
+
+    reader.addEventListener("loadend", function() {
+      // this should be promisified and/or sent to worker
+      console.log('mic: sound buffer us available');
+    });
+    reader.readAsArrayBuffer(blob);
+  }
+  get() {
+    // play with
+    // context.decodeAudioData(reader.result, function(buffer) {
+    //   playsound(buffer);
+    // },
+    // function(e) {
+    //   console.log("error ", e)
+    // });
+    return reader.result;
+  }
 }
