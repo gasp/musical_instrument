@@ -31,3 +31,5 @@ node_modules
 npm-debug.log
 
 public/samples/*
+public/javascripts/modernizr.custom.js
+public/gamepad-tester/*

@@ -45,8 +45,8 @@ class Ui {
   tick(controller) {
     this.ring(6, 6, controller.x, controller.y);
     this.wave();
-    this.circle(1, 6, .6);
-    this.pitchcircle(1, 6, (context.currentTime % pitch) / pitch, '#ccc', false);
+    this.circle(0, 6, 0);
+    this.pitchcircle(0, 6, (context.currentTime % pitch) / pitch, '#ccc', false);
   }
   // grid
   grid() {

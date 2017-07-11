@@ -1,10 +1,24 @@
 // TODO:
 // this should be cut between sources and player
 // sources can be recorder (gum), samples (pre set sounds) and oscillator
+// there should be a kind of sound.amp interface
+// sound playBuffer too
 
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 const context = new AudioContext();
 
+class Sound {
+  constructor() {
+
+  }
+  playBuffer(buffer, options) {
+    const source = context.createBufferSource();
+    source.buffer = buffer;
+    source.connect(amp);
+    source.loop = options.loop || false;
+    source.start(options.start || 0);
+  }
+}
 
 // Create + connect _compressor -- Compress me because I hate clipping
 const compressor = context.createDynamicsCompressor(); // The defaults for this are good.
@@ -78,7 +92,9 @@ document.addEventListener("keydown", (ev) => {
   if(ev.which === 32) {
     // in recording mode
     console.log('space pressed, recording mode')
-    app.ui.circle(2, 6, 1, '#aa0c0c');
+    app.ui.circle(0, 7, 1, '#aa0c0c');
+    app.mic.record();
+    ev.preventDefault(); // prevent from scrolling
   }
   if(ev.which === 81) {
     app.ui.circle(1, 7, 1);
@@ -88,7 +104,6 @@ document.addEventListener("keydown", (ev) => {
     app.ui.circle(2, 7, 1);
     samples[1].obj.play(samples[1].loop)
   }
-  console.log(ev.which)
 
 });
 
@@ -101,5 +116,27 @@ document.addEventListener("keyup", (ev) => {
   }
   if(ev.which === 81) {
     app.ui.circle(1, 7, 0);
+  }
+  if(ev.which === 32) {
+    // in recording mode
+    console.log('space pressed, recording mode')
+    app.ui.circle(0, 7, 1, '#e2e1e1');
+    app.mic.stop();
+    // FIXME this should be moved in sample
+    setTimeout(() => {
+      if (app.mic.get() === null) {
+        console.error('app.mic.get() is empty')
+      }
+      else context.decodeAudioData(app.mic.get(), function(buffer) {
+        const source = context.createBufferSource();
+        source.buffer = buffer;
+        source.connect(amp);
+        source.loop = true;
+        source.start(0);
+      },
+      function(e) {
+        console.log("error ", e)
+      });
+    }, 100)
   }
 });

@@ -7,6 +7,8 @@ class App {
 
     this.ui = new Ui(document.querySelector('canvas'));
     this.controller = new Controller();
+    this.mic = new Microphone();
+    this.sound = new Sound();
   }
 
   tick () {
