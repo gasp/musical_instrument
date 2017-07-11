@@ -1,9 +1,12 @@
+let blob;
+
 class Microphone {
   constructor() {
-    const that = this;
-    navigator.mediaDevices.getUserMedia({audio: true}).then(function(stream) {
-      that.stream = stream;
-      that.mediaRecorder = new MediaRecorder(stream);
+    navigator.mediaDevices.getUserMedia({audio: true}).then((stream) => {
+      this.stream = stream;
+      this.mediaRecorder = new MediaRecorder(stream);
+    }).catch((e)=>{
+      console.log('oh shit', e)
     });
     this.chunks = [];
     this.reader = new FileReader();
@@ -11,21 +14,31 @@ class Microphone {
 
   record() {
     this.mediaRecorder.start();
-    this.mediaRecorder.ondataavailable = function(e) {
+    console.log('🔴 recording baby!');
+    this.mediaRecorder.ondataavailable = (e) => {
       this.chunks.push(e.data);
     }
   }
   stop() {
-    const blob = new Blob(this.chunks, {
-      'type': 'audio/wav'
+    return new Promise((resolve, reject) =>{
+      try {
+        this.mediaRecorder.onstop = (e) => {
+          const blob = new Blob(this.chunks, {
+            'type': 'audio/wav'
+          });
+          this.reader.readAsArrayBuffer(blob);
+          this.chunks = []; // empty chunks
+        }
+        this.reader.addEventListener("loadend", function() {
+          console.log('mic: sound buffer is available');
+          resolve(this.reader);
+        });
+        this.mediaRecorder.stop(); // stopping will end reader loading
+      }
+      catch (e) {
+        reject(e);
+      }
     });
-    this.chunks = []; // empty chunks
-
-    reader.addEventListener("loadend", function() {
-      // this should be promisified and/or sent to worker
-      console.log('mic: sound buffer us available');
-    });
-    reader.readAsArrayBuffer(blob);
   }
   get() {
     // play with
@@ -35,6 +48,7 @@ class Microphone {
     // function(e) {
     //   console.log("error ", e)
     // });
-    return reader.result;
+    // console.log('get: reader', this.reader, 'result', this.reader.result);
+    return this.reader.result;
   }
 }
