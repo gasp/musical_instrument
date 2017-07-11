@@ -66,6 +66,7 @@ class Controller {
     this.x = this.pads[0].axes[ax];
     this.y = this.pads[0].axes[ay];
     // console.log(this.x, this.y);
+    // FIXME get those outta there
     lfo_amp.gain.value = this.y;
     if (this.x > 0) lfo.frequency.value = Math.exp(this.x) * 400;
     if (this.x < 0) lfo.frequency.value = this.x * 100;

@@ -20,13 +20,18 @@ class Sound {
   }
 }
 
+// Create + connect _compressor -- Compress me because I hate clipping
+const compressor = context.createDynamicsCompressor(); // The defaults for this are good.
+compressor.connect(context.destination); // Chain
 
 // global gain control
 const amp = context.createGain();
 amp.gain.value = .5;
 const analyser = context.createAnalyser();
 amp.connect(analyser);
-analyser.connect(context.destination);
+
+
+analyser.connect(compressor);
 analyser.fftSize = 1024;
 const dataArray = new Float32Array(1024);
 
