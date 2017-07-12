@@ -11,7 +11,8 @@ class Sound {
   constructor() {
 
   }
-  playBuffer(buffer, options) {
+  play(buffer, options) {
+    console.log(buffer, options.loop)
     const source = context.createBufferSource();
     source.buffer = buffer;
     source.connect(amp);
@@ -98,11 +99,11 @@ document.addEventListener("keydown", (ev) => {
   }
   if(ev.which === 81) {
     app.ui.circle(1, 7, 1);
-    samples[0].obj.play(samples[0].loop)
+    samples[0].obj.play(samples[0].obj.audioData,{loop: samples[0].loop});
   }
   if(ev.which === 83) {
     app.ui.circle(2, 7, 1);
-    samples[1].obj.play(samples[1].loop)
+    samples[1].obj.play(samples[1].obj.audioData,{loop: samples[1].loop});
   }
 
 });
@@ -127,6 +128,7 @@ document.addEventListener("keyup", (ev) => {
       if (app.mic.get() === null) {
         console.error('app.mic.get() is empty')
       }
+      // DRY this with Sample class
       else context.decodeAudioData(app.mic.get(), function(buffer) {
         const source = context.createBufferSource();
         source.buffer = buffer;
