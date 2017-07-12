@@ -1,5 +1,6 @@
-class Sample {
+class Sample extends Sound {
   constructor() {
+    super();
     this.audioData = null;
   }
   load(url) {
@@ -13,14 +14,6 @@ class Sample {
         });
       });
     });
-  }
-  play(loop=false) {
-    const player = context.createBufferSource();
-    player.buffer = this.audioData;
-    player.start();
-    player.loop = loop;
-    player.connect(amp);
-    return player;
   }
 }
 
