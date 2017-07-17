@@ -1,7 +1,37 @@
+const mapping = {
+  // this mapping  is for gamecube_retrolink on Chrome
+  name: 'Generic   USB  Joystick   (STANDARD GAMEPAD Vendor: 0079 Product: 0006)',
+  buttons: {
+    // to avoid confusion, I will use north south, east west instead of directions
+    n: 12, // top
+    s: 13, // bottom
+    w: 14, // left
+    e: 15, // right
+    // actions buttons
+    a: 2,
+    b: 3, // the red one
+    x: 0,
+    y: 1,
+    l: 4, // left trigger
+    r: 5, // right trigger
+    z: 6, // alt right trigger
+    p: 9, // start/pause
+  },
+  axes: {
+    left: {x:0, y:1}, // control stick
+    right: {x:2, y:3} // c/yellow stick
+  }
+};
+// remap depending on browsers and pads
+
 class Controller {
   constructor() {
     this.pads = [];
     this.prevPads = [];
+    this.pad = false;
+    this.buttons = {
+      b: false
+    };
     const gamepadSupportAvailable = navigator.getGamepads ||
         !!navigator.webkitGetGamepads ||
         !!navigator.webkitGamepads;
@@ -44,27 +74,37 @@ class Controller {
     if (!this.prevPads.length) this.prevPads = rawPads;
     this.pads = rawPads;
     console.log('new pad!', rawPads[0].id);
+    this.pad = rawPads[0];
   }
   tick() {
     // no pads, return
-    if (!this.pads.length) return;
+    if (this.pad === false) return;
 
-    // map axes
-    let ax = 1;
-    let ay = 2;
     if (/Chrome/.test(navigator.userAgent)) {
       // chrome has to refresh getGamepads
       navigator.getGamepads();
-      // chrome maps diffetrently
-      ax = 0;
-      ay = 1;
     }
 
-    // no movement, ignore
-    if (this.x === this.pads[0].axes[ax] && this.y === this.pads[0].axes[ay]) return;
+    // map button b
+    // pressed
+    if (this.pad.buttons[mapping.buttons.b].pressed
+      && !this.buttons.b) {
+      app.ui.circle(0, 7, 1, '#aa0c0c');
+      console.log('fake recording start');
+    }
+    // released
+    if (!this.pad.buttons[mapping.buttons.b].pressed
+      && this.buttons.b) {
+      app.ui.circle(0, 7, 1, '#e2e1e1');
+      console.log('fake recording stop');
+    }
+    this.buttons.b = this.pad.buttons[mapping.buttons.b].pressed;
 
-    this.x = this.pads[0].axes[ax];
-    this.y = this.pads[0].axes[ay];
+    // no movement, ignore
+    if (this.x === this.pad.axes[mapping.axes.left.x] && this.y === this.pad.axes[mapping.axes.left.y]) return;
+
+    this.x = this.pad.axes[mapping.axes.left.x];
+    this.y = this.pad.axes[mapping.axes.left.y];
     // console.log(this.x, this.y);
     // FIXME get those outta there
     lfo_amp.gain.value = this.y;
