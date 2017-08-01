@@ -30,8 +30,10 @@ class Controller {
     this.prevPads = [];
     this.pad = false;
     this.buttons = {
+      a: false,
       b: false
     };
+    this._listeners = [];
     const gamepadSupportAvailable = navigator.getGamepads ||
         !!navigator.webkitGetGamepads ||
         !!navigator.webkitGamepads;
@@ -75,6 +77,7 @@ class Controller {
     this.pads = rawPads;
     console.log('new pad!', rawPads[0].id);
     this.pad = rawPads[0];
+    controls(); // FIXME this is ugly !
   }
   tick() {
     // no pads, return
@@ -84,22 +87,40 @@ class Controller {
       // chrome has to refresh getGamepads
       navigator.getGamepads();
     }
+    this.tickButtons();
+    this.tickAxes();
+  }
+
+  tickButtons() {
+
+    Object.entries(mapping.buttons).forEach(([button, n]) => {
+      // TODO: this should use prevPads instead of this.buttons ?
+      if (this.pad.buttons[n].pressed && !this.buttons[button]) {
+        this._eventTrigger(button, 'pressed');
+        this.buttons[button] = this.pad.buttons[n].pressed;
+      }
+      else if (!this.pad.buttons[n].pressed && this.buttons[button]) {
+        this._eventTrigger(button, 'released');
+        this.buttons[button] = this.pad.buttons[n].pressed;
+      }
+
+    });
 
     // map button b
-    // pressed
     if (this.pad.buttons[mapping.buttons.b].pressed
       && !this.buttons.b) {
       app.ui.circle(0, 7, 1, '#aa0c0c');
       console.log('fake recording start');
     }
-    // released
     if (!this.pad.buttons[mapping.buttons.b].pressed
       && this.buttons.b) {
       app.ui.circle(0, 7, 1, '#e2e1e1');
       console.log('fake recording stop');
     }
     this.buttons.b = this.pad.buttons[mapping.buttons.b].pressed;
+  }
 
+  tickAxes() {
     // no movement, ignore
     if (this.x === this.pad.axes[mapping.axes.left.x] && this.y === this.pad.axes[mapping.axes.left.y]) return;
 
@@ -108,8 +129,31 @@ class Controller {
     // console.log(this.x, this.y);
     // FIXME get those outta there
     lfo_amp.gain.value = this.y;
-    if (this.x > 0) lfo.frequency.value = Math.exp(this.x) * 400;
-    if (this.x < 0) lfo.frequency.value = this.x * 100;
+    // if (this.x > 0) lfo.frequency.value = Math.exp(this.x) * 400;
+    // if (this.x < 0) lfo.frequency.value = this.x * 100;
     console.log(lfo.frequency.value);
+  }
+
+  _eventTrigger(button, type, value=0) {
+    if (!this._listeners.length) return;
+
+    this._listeners.forEach((listener) => {
+      if (listener.type === type && listener.button === button) {
+        listener.callback({
+          type: listener.type,
+          button: listener.button,
+          value: value,
+          // player: player,
+          event: listener,
+          timestamp: Date.now()
+        });
+      }
+    });
+  }
+
+  on(type, button, callback, options = {}) {
+    if (typeof type === "string" && type.match(/\s+/)) type = type.split(/\s+/g);
+    if (typeof button === "string" && button.match(/\s+/)) button = button.split(/\s+/g);
+    this._listeners.push({ type: type, button: button, callback: callback, options: options});
   }
 }
